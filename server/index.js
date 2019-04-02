@@ -19,7 +19,7 @@ const geocode = (city, cb) => {
       },
       (err, resp) => {
         if (err) {
-          reject(reportError('Unable to get location'))
+          reject(reportError('Не удалось получить геолокацию'))
         } else {
           const {
             body: {
@@ -27,7 +27,7 @@ const geocode = (city, cb) => {
             },
           } = resp
           if (!matchCity) {
-            return reject(reportError('Unable to get location'))
+            return reject(reportError('Не удалось получить геолокацию'))
           }
           const {
             center: [lng, lat],
@@ -55,10 +55,10 @@ const getWeather = (data) => {
       },
       (err, resp) => {
         if (err) {
-          reject(reportError('Unable to get weather data!'))
+          reject(reportError('Не удалось получить данные по погоде'))
         } else {
           if (resp.body.error) {
-            reject(reportError('Unable to get weather data!'))
+            reject(reportError('Не удалось получить данные по погоде'))
           } else {
             resolve(reportResult(resp.body, place_name))
           }
@@ -74,7 +74,7 @@ const reportResult = (data, place) => {
     daily,
   } = data
   const report = daily.data[0].summary
-  const msg = `${place}: ${report}. Температура ${temperature}C. Вероятность дождя ${precipProbability}%`
+  const msg = `${report}. Температура ${temperature}C. Вероятность дождя ${precipProbability}%`
   return { result: true, msg }
 }
 
@@ -89,7 +89,7 @@ app.use(cors({ origin: true }))
 
 app.get('/weather', (req, res) => {
   if (!req.query.address) {
-    return res.send({ error: 'No location address provided' })
+    return res.send({ error: 'Это не город, или я его не понимаю - я же робот 👩‍🔬' })
   }
 
   geocode(req.query.address, getWeather)

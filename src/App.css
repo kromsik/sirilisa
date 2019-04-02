@@ -27,7 +27,7 @@
 }
 
 .App-text {
-  text-transform: capitalize;
+  font-size: 30px
 }
 
 @keyframes App-logo-scale {
