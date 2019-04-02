@@ -13,11 +13,11 @@ recognition.maxAlternatives = 5
 recognition.lang = 'ru-RU'
 
 //-----------------COMPONENT---------------------
-
 class App extends React.Component {
   state = {
     listening: false,
     text: '',
+    weather: '',
   }
 
   toggleListen = () => {
@@ -39,10 +39,21 @@ class App extends React.Component {
         const [res] = event.results
         if (res.isFinal) {
           console.log('Вы сказали 🌬: ', res[0].transcript)
-          this.setState({ listening: false, text: res[0].transcript })
+          this.setState(
+            { listening: false, text: res[0].transcript, weather: 'loading' },
+            this.getForecast,
+          )
         }
       }
     }
+  }
+
+  getForecast = () => {
+    fetch(`http://localhost:8888/weather?address=${this.state.text}`).then((res) => {
+      res.json().then((data) => {
+        this.setState({ weather: data.forecast })
+      })
+    })
   }
 
   render() {
@@ -59,6 +70,7 @@ class App extends React.Component {
             onClick={this.toggleListen}
           />
           <p className={'App-text'}>{this.state.text}</p>
+          <p className={'App-text'}>{this.state.weather}</p>
         </div>
       </main>
     )
