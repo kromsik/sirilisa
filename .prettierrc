@@ -1,0 +1,17 @@
+{
+  "arrowParens": "always",
+  "bracketSpacing": true,
+  "eslintIntegration": true,
+  "ignorePath": ".prettierignore",
+  "jsxBracketSameLine": false,
+  "printWidth": 100,
+  "proseWrap": "preserve",
+  "requireConfig": false,
+  "semi": false,
+  "singleQuote": true,
+  "stylelintIntegration": false,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "tslintIntegration": true,
+  "useTabs": false
+}

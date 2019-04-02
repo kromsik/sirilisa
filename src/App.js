@@ -1,28 +1,68 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import mic from './microphone.svg'
+import './App.css'
 
-class App extends Component {
+//-----------------SPEECH RECOGNITION SETUP---------------------
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+const recognition = new SpeechRecognition()
+
+recognition.continous = true
+recognition.interimResults = true
+recognition.maxAlternatives = 5
+recognition.lang = 'ru-RU'
+
+//-----------------COMPONENT---------------------
+
+class App extends React.Component {
+  state = {
+    listening: false,
+    text: '',
+  }
+
+  toggleListen = () => {
+    this.setState(
+      (state) => ({
+        ...state,
+        listening: !state.listening,
+      }),
+      this.handleListen,
+    )
+  }
+
+  handleListen = () => {
+    if (this.state.listening) {
+      this.setState((state) => ({ ...state, text: '' }))
+      recognition.start()
+
+      recognition.onresult = (event) => {
+        const [res] = event.results
+        if (res.isFinal) {
+          console.log('Вы сказали 🌬: ', res[0].transcript)
+          this.setState({ listening: false, text: res[0].transcript })
+        }
+      }
+    }
+  }
+
   render() {
     return (
-      <div className="App">
+      <main className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+          <h1>Голосовой сервис Sirilisa</h1>
         </header>
-      </div>
-    );
+        <div>
+          <img
+            src={mic}
+            className={`App-logo ${this.state.listening ? 'App-logo-active' : ''}`}
+            alt="logo"
+            onClick={this.toggleListen}
+          />
+          <p className={'App-text'}>{this.state.text}</p>
+        </div>
+      </main>
+    )
   }
 }
 
-export default App;
+export default App
