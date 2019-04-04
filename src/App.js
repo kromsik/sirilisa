@@ -1,9 +1,8 @@
 import React from 'react'
-import mic from './microphone.svg'
+import mic from './mic.svg'
 import './App.css'
 
 //-----------------SPEECH RECOGNITION SETUP---------------------
-
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
 const recognition = new SpeechRecognition()
 
@@ -17,7 +16,7 @@ class App extends React.Component {
   state = {
     listening: false,
     text: '',
-    weather: '',
+    transcripting: false,
   }
 
   toggleListen = () => {
@@ -36,27 +35,22 @@ class App extends React.Component {
       recognition.start()
 
       recognition.onresult = (event) => {
+        this.setState({ transcripting: true })
         const [res] = event.results
         if (res.isFinal) {
           console.log('Вы сказали 🌬: ', res[0].transcript)
-          this.setState(
-            { listening: false, text: res[0].transcript, weather: 'loading' },
-            this.getForecast,
-          )
+          this.setState({ listening: false, text: res[0].transcript, transcripting: false })
         }
       }
     }
   }
 
-  getForecast = () => {
-    fetch(`http://localhost:8888/weather?address=${this.state.text}`).then((res) => {
-      res.json().then((data) => {
-        this.setState({ weather: data.forecast })
-      })
-    })
-  }
-
   render() {
+    const message = this.state.transcripting
+      ? 'Распознаю ⏳'
+      : this.state.text
+      ? `Вы сказали 🌬: ${this.state.text}`
+      : ''
     return (
       <main className="App">
         <header className="App-header">
@@ -69,8 +63,7 @@ class App extends React.Component {
             alt="logo"
             onClick={this.toggleListen}
           />
-          <p className={'App-text'}>{this.state.text}</p>
-          <p className={'App-text'}>{this.state.weather}</p>
+          <p className={'App-text'}>{message}</p>
         </div>
       </main>
     )
